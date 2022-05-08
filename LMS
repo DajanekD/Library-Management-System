@@ -1,0 +1,373 @@
+// Dajanek Davis
+// Library Management System
+#include <iostream>
+using namespace std;
+
+
+class LMS{
+    private:
+        struct bookInfo{                         // Holds Book Details
+            long long int isbn;
+            string title;
+            string author;
+            bool checkedout = false;             // Checking Availability
+            bookInfo *next_node;
+            bookInfo *prev_node;
+        };
+    bookInfo *head_n = new bookInfo();           // Head
+    bookInfo *tail_n;                            // Tail
+    bookInfo *current_n;                         // User Input
+    bookInfo *temp;                              
+    
+    struct patronInfo{                         // Holds Patron Details
+        long int patronid;
+        string patron_name;
+        long int isbn;
+        string title;
+        patronInfo *next;
+        patronInfo *prev;
+    };
+    patronInfo *head = new patronInfo();        // Head
+    patronInfo *tail;                           // Tail
+    patronInfo *current;                        // User Input
+    patronInfo *tmp;
+    int NumBooks = 0;                        
+    int noPatrons  = 0;
+    
+public:
+    void AddBook(int ISBN, string TITLE, string AUTHOR){
+        current_n = new bookInfo();
+        
+        // Data Insertion
+        current_n->isbn = ISBN;
+        current_n->title = TITLE;
+        current_n->author = AUTHOR;
+        current_n->next_node = nullptr;
+        
+        // Check
+        if(NumBooks == 0)
+        {
+            head_n = current_n;
+            tail_n = current_n;
+            NumBooks++;
+        }else{                                     // Adds Book to List
+            tail_n->next_node = current_n;
+            current_n->prev_node = tail_n;
+            tail_n=current_n;
+            NumBooks++;
+        }
+    }
+    
+    void checkOut(long long int ISBN, long int patron_id, string patronname){
+        temp = head_n;
+        bool f = false;
+        string TITLE;
+        
+        for(int i = 0; i < NumBooks; ++i)
+        {
+            if(temp->isbn == ISBN)
+            {
+                temp->checkedout=true;
+                TITLE=temp->title;
+                f=true;
+                break;
+            }
+            temp = temp->next_node;
+        }
+        if(f == true)
+        {
+            current = new patronInfo();
+            current->patronid = patron_id;
+            current->patron_name = patronname;
+            current->isbn = ISBN;
+            current->title = TITLE;
+            
+            if(noPatrons == 0)
+            {
+                head=current;
+                tail=current;
+                noPatrons++;
+            }else{
+                tail->next = current;
+                tail = current;
+                noPatrons++;
+            }
+            cout << "\n Checked Out!!!";
+        }
+    }
+    
+        void checkedoutBooks()
+        {
+            tmp == head;
+            for(int i = 0; i < noPatrons; ++i){
+                cout << "\n===========================" << endl;
+                cout << "Patron ID: " << tmp->patronid;
+                cout << "\n Name: " << tmp->patron_name;
+                cout << "\n Checked Out " << tmp->title;
+                cout << "\n ISBN: " << tmp->isbn;
+                cout << "\n=============================";
+                tmp = tmp->next;
+            }
+        }
+        
+        void checkinBook(long long int ISBN)
+        {
+            tmp = head;
+            bool f = false;
+            
+            for(int i = 0; i < NumBooks; ++i)
+            {
+                if(tmp->isbn == ISBN)
+                {
+                    f = true;
+                    break;
+                }
+                tmp = tmp->next;
+            }
+            if(tmp == head)
+            {
+                head = head->next;
+                delete tmp;
+                noPatrons--;
+            }else{
+                tmp->prev = current;
+                current->next = tmp->next;
+                delete tmp;
+                noPatrons--;
+            }
+            
+            temp = head_n;
+            for(int i = 0; i < NumBooks; ++i){
+                if(temp->isbn = ISBN)
+                {
+                    temp->checkedout = false;
+                }
+            }
+            cout << "Item is Checked in";
+        }
+        
+        void searchBook(long int ISBN)
+        {
+            temp = head_n;
+            bool f = false;
+            cout << "\n Book by ISBN " << ISBN;
+            for (int i = 0; i < NumBooks; ++i)
+            {
+                if(temp->isbn == ISBN)
+                {
+                    f = true;
+                    cout << "\n ===========================" << endl;
+                    cout << "ISBN: " << temp->isbn;
+                    cout << "\nTitle: " << temp->title;
+                    cout << "\nAuthor: "<< temp->author;
+                    cout << "\nCheckedout: " << temp->checkedout;
+                    cout << "\n=============================";
+                }
+                temp = temp->next_node;
+            }
+            if(f == false)
+            {
+                cout << "\n BOOK NOT FOUND!!!" << endl;
+                cout << "=========================";
+                
+            }
+        }
+        
+        void display()
+        {
+            temp = head_n;
+            
+            for(int i = 0; i < NumBooks; ++i)
+            {
+                cout << "\n========================"<< endl;
+                cout << "ISBN: " << temp->isbn;
+                cout << "\nTitle: " << temp->title;
+                cout << "\nAuthor: " << temp->author;
+                cout << "\nChecked Out: " << temp->checkedout;
+                cout << "\n=========================" << endl;
+                temp = temp->next_node;
+            }
+        }
+        
+        void deleteBook(long int ISBN)
+        {
+            temp = head_n;
+            bool f = false;
+            
+            for(int i = 0; i < NumBooks; ++i)
+            {
+                if(temp->isbn == ISBN)
+                {
+                    f = true;
+                    break;
+                }
+                temp = temp->next_node;
+            }
+            if (f)
+            {
+                if(temp == head_n)
+                {
+                    head_n = head_n->next_node;
+                    delete temp;
+                }else{
+                    current_n = temp->prev_node;
+                    current_n->next_node = temp->next_node;
+                    delete temp;
+                }
+                NumBooks--;
+            }
+            cout << endl;
+            cout << "Item Deleted!!!";
+     }
+};
+
+    void employeeServices(LMS x)
+    {
+        int ch;
+        long int i_d;
+        long int is_bn;
+        string bt;
+        string bn;
+        string aut;
+        string patronName;
+        
+        cout << "\n===================================" << endl;
+        cout << "    Library Management System      " << endl;
+        cout << "===================================" << endl;
+        cout << "         1. Add Book" << endl;
+        cout << "         2. Search" << endl;
+        cout << "         3. Delete Book" << endl;
+        cout << "         4. Exit" << endl;
+        cout << "Enter: ";
+        loop: cin >> ch;
+        
+        switch(ch){
+            case 1:
+                cout << "ISBN: ";
+                cin >> is_bn;
+                cout << "Title: ";
+                cin.ignore();
+                getline(cin, bn);
+                cout << "Author: ";
+                cin.ignore();
+                getline(cin, aut);
+                x.AddBook(is_bn, bt, aut);
+                employeeServices(x);
+                break;
+            case 2:
+                cout << "ISBN: ";
+                cin >> is_bn;
+                x.searchBook(is_bn);
+                employeeServices(x);
+                break;
+            case 3:
+                cout << "Enter ISBN to be Deleted: ";
+                cin >> is_bn;
+                x.deleteBook(is_bn);
+                employeeServices(x);
+                break;
+            case 4: 
+                cout << "EXIT";
+                exit(0);
+            default:
+                cout << "Error!!!";
+                goto loop;
+        }
+    }
+    
+    void patronServices(LMS y)
+    {
+        int choice;
+        long int id;
+        long int isBN;
+        string bT;
+        string bN;
+        string auT;
+        string patronNAME;
+        
+        cout << "\n===================================" << endl;
+        cout << "    Library Management System      " << endl;
+        cout << "===================================" << endl;
+        cout << "         1. Checkout" << endl;
+        cout << "         2. Checkin" << endl;
+        cout << "         3. Search" << endl;
+        cout << "         4. Exit" << endl;
+        cout << "Enter: ";
+        loop2:cin >> choice;
+        
+        switch(choice){
+            case 1:
+                cout << "ID: ";
+                cin >> id;
+                cout << "Name: ";
+                cin >> patronNAME;
+                cout << "ISBN: ";
+                cin >> isBN;
+                y.checkOut(id, isBN, patronNAME);
+                cout << isBN << " Checked Out!!!";
+                patronServices(y);
+                break;
+            case 2:
+                cout << "ISBN: ";
+                cin >> isBN;
+                y.checkinBook(isBN);
+                cout << isBN << " Checked In!!!";
+                patronServices(y);
+                break;
+            case 3:
+                cout << "ISBN: ";
+                cin >> isBN;
+                y.searchBook(isBN);
+                patronServices(y);
+                break;
+            case 4:
+                  cout << "EXIT";
+                  exit(0);
+            default:
+                cout << "Error!!!";
+                goto loop2;
+        }
+    }
+    
+    int main()
+    {
+        LMS ll;
+        char ch;
+        string employeeU;
+        string employeePW;
+        string patronU;
+        string patronPW;
+        
+        cout << "\n===================================" << endl;
+        cout << "    Library Management System      " << endl;
+        cout << "===================================" << endl;
+        cout << "\n 1. Employee" << endl;
+        cout << "\n 2. Student " << endl;
+        cout << "Enter: ";
+        cin >> ch;
+        
+        if(ch == '1'){
+	    cout << "Username: ";                      // Prompt Employee for Username
+	    cin >> employeeU;
+	    cout << "Password: ";
+	    cin >> employeePW;                         // Prompt Employee for Password
+	    if(employeeU == "Staff123" && employeePW == "staff123"){
+	        cout << "\nLogin Successful\n";
+	        employeeServices(ll);
+	    }else{
+	        cout << "Login Unsuccessul" << endl;
+	    }
+	}else if(ch == '2'){
+	    cout << "Username: ";                        // Prompt Patron for Username
+	    cin >> patronU;
+	    cout << "Password: ";                        // Prompt Patron for Password
+	    cin >> patronPW;
+	    if(patronU == "Patron123" && patronPW == "patron123"){
+	        cout << "\nLogin Successful\n";
+	        patronServices(ll);
+	    }else{
+	        cout << "Login Unsuccessul" << endl;
+	    }
+	}
+return 0;
+}
